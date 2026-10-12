@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本語学習の手引き</title>
+<meta name="description" content="五十音図・あいさつ・文法の基礎・学習のコツをまとめた日本語学習のためのページです。">
+<style>
+  :root{
+    --bg:#faf8f5;
+    --surface:#ffffff;
+    --ink:#23211f;
+    --ink-2:#6e6762;
+    --accent:#bc002d;
+    --accent-2:#f7e9ec;
+    --line:#e8e3dc;
+    --radius:16px;
+    --shadow:0 2px 8px rgba(35,33,31,.05), 0 14px 34px -18px rgba(35,33,31,.22);
+  }
+
+  *{box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* ============ ヘッダー ============ */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    padding:88px 24px 76px;
+    background:linear-gradient(180deg,#ffffff 0%,#faf8f5 100%);
+    border-bottom:1px solid var(--line);
+  }
+
+  .hero-inner{
+    position:relative;
+    z-index:2;
+    max-width:960px;
+    margin:0 auto;
+  }
+
+  .hero-kana{
+    margin:0 0 20px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.55em;
+    color:var(--accent);
+  }
+
+  .hero h1{
+    margin:0 0 22px;
+    font-size:clamp(32px,6.2vw,56px);
+    line-height:1.22;
+    letter-spacing:.03em;
+    font-weight:700;
+  }
+
+  .hero-lead{
+    margin:0 0 28px;
+    max-width:560px;
+    font-size:15.5px;
+    color:var(--ink-2);
+  }
+
+  .hero-badge{
+    display:inline-block;
+    padding:8px 18px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:#fff;
+    font-size:12.5px;
+    letter-spacing:.08em;
+    color:var(--ink-2);
+  }
+
+  .hero-mark{
+    position:absolute;
+    right:-2%;
+    bottom:-30%;
+    z-index:1;
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+    font-size:clamp(240px,42vw,540px);
+    line-height:1;
+    color:var(--accent);
+    opacity:.055;
+    user-select:none;
+    pointer-events:none;
+  }
+
+  /* ============ ナビ ============ */
+  .toc{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(250,248,245,.9);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+
+  .toc ul{
+    display:flex;
+    gap:4px;
+    max-width:1008px;
+    margin:0 auto;
+    padding:0 24px;
+    list-style:none;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+
+  .toc ul::-webkit-scrollbar{display:none;}
+
+  .toc a{
+    display:block;
+    padding:16px 14px;
+    border-bottom:2px solid transparent;
+    color:var(--ink-2);
+    font-size:13.5px;
+    font-weight:600;
+    letter-spacing:.04em;
+    text-decoration:none;
+    white-space:nowrap;
+    transition:color .2s, border-color .2s;
+  }
+
+  .toc a:hover{
+    color:var(--accent);
+    border-bottom-color:var(--accent);
+  }
+
+  /* ============ セクション共通 ============ */
+  .section{
+    max-width:1008px;
+    margin:0 auto;
+    padding:84px 24px;
+  }
+
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:0 0 18px;
+    font-size:clamp(22px,3.4vw,30px);
+    line-height:1.4;
+    letter-spacing:.03em;
+  }
+
+  .section-title .num{
+    flex:0 0 auto;
+    padding:3px 11px;
+    border:1px solid var(--accent);
+    border-radius:999px;
+    color:var(--accent);
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:.14em;
+  }
+
+  .section-desc{
+    max-width:660px;
+    margin:0 0 40px;
+    font-size:15px;
+    color:var(--ink-2);
+  }
+
+  .note{
+    margin:18px 0 0;
+    font-size:13px;
+    color:var(--ink-2);
+  }
+
+  /* ============ 五十音図 ============ */
+  .kana-tabs{
+    display:inline-flex;
+    gap:4px;
+    margin-bottom:22px;
+    padding:4px;
+    border-radius:999px;
+    background:#f0ece6;
+  }
+
+  .tab{
+    padding:9px 24px;
+    border:0;
+    border-radius:999px;
+    background:transparent;
+    color:var(--ink-2);
+    font:inherit;
+    font-size:13.5px;
+    font-weight:600;
+    letter-spacing:.06em;
+    cursor:pointer;
+    transition:background .2s, color .2s, box-shadow .2s;
+  }
+
+  .tab.is-active{
+    background:#fff;
+    color:var(--accent);
+    box-shadow:0 2px 8px rgba(35,33,31,.08);
+  }
+
+  .kana-grid{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:8px;
+    padding:16px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--surface);
+    box-shadow:var(--shadow);
+  }
+
+  .kana-cell{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    aspect-ratio:1/1;
+    border:1px solid #f0ece6;
+    border-radius:12px;
+    background:#fdfcfa;
+    transition:transform .18s, background .18s, border-color .18s;
+  }
+
+  .kana-cell:hover{
+    transform:translateY(-3px);
+    background:var(--accent-2);
+    border-color:#f0d3da;
+  }
+
+  .kana-cell.is-empty{
+    background:transparent;
+    border-color:transparent;
+  }
+
+  .kana-char{
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+    font-size:clamp(20px,3.6vw,32px);
+    line-height:1;
+    font-weight:500;
+  }
+
+  .kana-romaji{
+    margin-top:7px;
+    font-size:10.5px;
+    letter-spacing:.08em;
+    color:var(--ink-2);
+  }
+
+  /* ============ あいさつカード ============ */
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(238px,1fr));
+    gap:16px;
+  }
+
+  .phrase-card{
+    position:relative;
+    overflow:hidden;
+    padding:22px 22px 20px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--surface);
+    box-shadow:var(--shadow);
+    transition:transform .2s;
+  }
+
+  .phrase-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    width:3px;
+    background:var(--accent);
+    opacity:0;
+    transition:opacity .2s;
+  }
+
+  .phrase-card:hover{transform:translateY(-3px);}
+  .phrase-card:hover::before{opacity:1;}
+
+  .phrase-card h3{
+    margin:0 0 10px;
+    font-size:17.5px;
+    letter-spacing:.02em;
+  }
+
+  .phrase-card p{
+    margin:0;
+    font-size:13.5px;
+    line-height:1.8;
+    color:var(--ink-2);
+  }
+
+  /* ============ 助詞 ============ */
+  .joshi-list{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(276px,1fr));
+    gap:14px;
+  }
+
+  .joshi-item{
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+    padding:18px 20px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--surface);
+    box-shadow:var(--shadow);
+  }
+
+  .joshi-mark{
+    flex:0 0 auto;
+    display:grid;
+    place-items:center;
+    width:46px;
+    height:46px;
+    border-radius:12px;
+    background:var(--accent-2);
+    color:var(--accent);
+    font-size:22px;
+    font-weight:700;
+  }
+
+  .joshi-role{
+    margin:0 0 2px;
+    font-size:12.5px;
+    letter-spacing:.04em;
+    color:var(--ink-2);
+  }
+
+  .joshi-ex{
+    margin:0;
+    font-size:15.5px;
+  }
+
+  /* ============ 文型 ============ */
+  .sub-title{
+    margin:52px 0 16px;
+    font-size:18px;
+    letter-spacing:.04em;
+  }
+
+  .sub-title::before{
+    content:"—";
+    margin-right:10px;
+    color:var(--accent);
+  }
+
+  .pattern-list{
+    display:grid;
+    gap:10px;
+  }
+
+  .pattern{
+    display:grid;
+    grid-template-columns:minmax(150px,230px) 1fr;
+    gap:8px 20px;
+    align-items:baseline;
+    padding:16px 22px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    box-shadow:var(--shadow);
+  }
+
+  .pattern strong{
+    color:var(--accent);
+    font-size:15.5px;
+    letter-spacing:.02em;
+  }
+
+  .pattern-mean{
+    margin:0 0 2px;
+    font-size:12.5px;
+    color:var(--ink-2);
+  }
+
+  .pattern-ex{
+    margin:0;
+    font-size:15px;
+  }
+
+  /* ============ 学習のコツ ============ */
+  .tips{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(258px,1fr));
+    gap:18px;
+  }
+
+  .tip{
+    padding:24px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--surface);
+    box-shadow:var(--shadow);
+  }
+
+  .tip-num{
+    display:block;
+    margin-bottom:10px;
+    font-size:11.5px;
+    font-weight:700;
+    letter-spacing:.18em;
+    color:var(--accent);
+  }
+
+  .tip h3{
+    margin:0 0 10px;
+    font-size:16.5px;
+    letter-spacing:.02em;
+  }
+
+  .tip p{
+    margin:0;
+    font-size:13.5px;
+    line-height:1.85;
+    color:var(--ink-2);
+  }
+
+  /* ============ 一日の学習例 ============ */
+  .schedule{
+    margin-top:36px;
+    padding:30px;
+    border:1px solid #f0d3da;
+    border-radius:var(--radius);
+    background:linear-gradient(135deg,#ffffff 0%,#fdf6f7 100%);
+  }
+
+  .schedule h3{
+    margin:0 0 20px;
+    font-size:17px;
+    letter-spacing:.04em;
+  }
+
+  .schedule ul{
+    display:grid;
+    gap:14px;
+    margin:0;
+    padding:0;
+    list-style:none;
+  }
+
+  .schedule li{
+    display:flex;
+    gap:16px;
+    align-items:baseline;
+    font-size:14.5px;
+  }
+
+  .schedule .time{
+    flex:0 0 auto;
+    min-width:96px;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:.06em;
+    color:var(--accent);
+  }
+
+  /* ============ フッター ============ */
+  footer{
+    padding:60px 24px 68px;
+    border-top:1px solid var(--line);
+    background:#fff;
+    text-align:center;
+  }
+
+  .footer-mark{
+    margin:0 0 14px;
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+    font-size:38px;
+    line-height:1;
+    color:var(--accent);
+    opacity:.85;
+  }
+
+  footer p{
+    margin:0;
+    font-size:13.5px;
+    color:var(--ink-2);
+  }
+
+  .footer-title{
+    margin-bottom:6px !important;
+    font-size:14.5px;
+    font-weight:700;
+    letter-spacing:.14em;
+    color:var(--ink) !important;
+  }
+
+  /* ============ レスポンシブ ============ */
+  @media (max-width:640px){
+    .hero{padding:64px 20px 56px;}
+    .section{padding:60px 20px;}
+    .kana-grid{gap:5px;padding:10px;}
+    .kana-romaji{font-size:9px;margin-top:4px;}
+    .pattern{grid-template-columns:1fr;}
+    .schedule{padding:22px;}
+    .schedule li{flex-direction:column;gap:2px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="hero-kana">にほんご</p>
+    <h1>日本語学習の手引き</h1>
+    <p class="hero-lead">
+      文字・あいさつ・文法・学習法を、このページひとつで確認できます。<br>
+      むずかしく考えず、まずは声に出してみましょう。
+    </p>
+    <span class="hero-badge">全46文字 ／ 基本文型 ／ 毎日の習慣</span>
+  </div>
+  <div class="hero-mark" aria-hidden="true">あ</div>
+</header>
+
+<nav class="toc" aria-label="目次">
+  <ul>
+    <li><a href="#kana">五十音図</a></li>
+    <li><a href="#aisatsu">あいさつ</a></li>
+    <li><a href="#bunpou">文法の基礎</a></li>
+    <li><a href="#tips">学習のコツ</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- ========== 01 五十音図 ========== -->
+  <section class="section" id="kana">
+    <h2 class="section-title"><span class="num">01</span>五十音図</h2>
+    <p class="section-desc">
+      日本語の音は、基本的にこの四十六文字で表されます。
+      まずは「あ・い・う・え・お」の順番と、それぞれの音を確かめましょう。
+      平仮名と片仮名は、形は違いますが音は同じです。
+    </p>
+
+    <div class="kana-tabs" role="tablist" aria-label="文字の種類">
+      <button class="tab is-active" data-kana="hiragana" role="tab" aria-selected="true">平仮名</button>
+      <button class="tab" data-kana="katakana" role="tab" aria-selected="false">片仮名</button>
+    </div>
+
+    <div class="kana-grid" id="kanaGrid" role="tabpanel"></div>
+
+    <p class="note">
+      ※ ローマ字は発音の目安です。「し」は shi、「ち」は chi、「つ」は tsu、「ふ」は fu と書きます。<br>
+      ※ 空欄は、現代の日本語で使われない音です。
+    </p>
+  </section>
+
+  <!-- ========== 02 あいさつ ========== -->
+  <section class="section" id="aisatsu">
+    <h2 class="section-title"><span class="num">02</span>毎日使うあいさつ</h2>
+    <p class="section-desc">
+      あいさつは会話の入口です。意味を考えすぎず、そのまま覚えて口に出してみましょう。
+      使う場面と一緒に覚えると、自然に出てくるようになります。
+    </p>
+
+    <div class="card-grid">
+      <article class="phrase-card">
+        <h3>おはようございます</h3>
+        <p>朝、人に会ったときのあいさつ。親しい間柄では「おはよう」だけでも構いません。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>こんにちは</h3>
+        <p>昼間に使う、いちばん一般的なあいさつ。相手が誰でも使えます。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>こんばんは</h3>
+        <p>日が暮れてから、人に会ったときのあいさつです。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>ありがとうございます</h3>
+        <p>感謝を伝える言葉。より丁寧に言うときは「ありがとうございました」。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>すみません</h3>
+        <p>謝るときの言葉ですが、人に声をかけるときにも使います。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>はじめまして</h3>
+        <p>初めて会った人に使います。続けて「よろしくお願いします」と言います。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>お疲れ様です</h3>
+        <p>仕事や作業の後、相手の頑張りをねぎらう言葉です。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>いただきます</h3>
+        <p>食事を始めるときの言葉。料理を作った人や、命に感謝します。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>ごちそうさまでした</h3>
+        <p>食事を終えたときの言葉。「おいしかった」という気持ちも伝わります。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>いってきます</h3>
+        <p>家を出るときの言葉。見送る人は「いってらっしゃい」と返します。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>ただいま</h3>
+        <p>帰宅したときの言葉。迎える人は「おかえりなさい」と返します。</p>
+      </article>
+
+      <article class="phrase-card">
+        <h3>おやすみなさい</h3>
+        <p>寝る前のあいさつ。家族や親しい人に使います。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ========== 03 文法の基礎 ========== -->
+  <section class="section" id="bunpou">
+    <h2 class="section-title"><span class="num">03</span>文法の基礎</h2>
+    <p class="section-desc">
+      日本語は、語順よりも「助詞」が文の意味を決めます。
+      まずは基本の八つを押さえれば、短い文なら十分に作れます。
+    </p>
+
+    <div class="joshi-list">
+      <div class="joshi-item">
+        <span class="joshi-mark">は</span>
+        <div>
+          <p class="joshi-role">主題を表す</p>
+          <p class="joshi-ex">私は学生です。</p>
+        </div>
+      </div>
+
+      <div class="joshi-item">
+        <span class="joshi-mark">が</span>
+        <div>
+          <p class="joshi-role">主語を表す</p>
+          <p class="joshi-ex">猫がいます。</p>
+        </div>
+      </div>
+
+      <div class="joshi-item">
+        <span class="joshi-mark">を</span>
+        <div>
+          <p class="joshi-role">目的語を表す</p>
+          <p class="joshi-ex">本を読みます。</p>
+        </div>
+      </div>
+
+      <div class="joshi-item">
+        <span class="joshi-mark">に</span>
+        <div>
+          <p class="joshi-role">時間・場所・方向</p>
+          <p class="joshi-ex">七時に起きます。</p>
+        </div>
+      </div>
+
+      <div class="joshi-item">
+        <span class="joshi-mark">で</span>
+        <div>
+          <p class="joshi-role">場所・手段</p>
+          <p class="joshi-ex">図書館で勉強します。</p>
+        </div>
+      </div>
+
+      <div class="joshi-item">
+        <span class="joshi-mark">へ</span>
+        <div>
+          <p class="joshi-role">方向を表す</p>
+          <p class="joshi-ex">日本へ行きます。</p>
+        </div>
+      </div>
+
+      <div class="joshi-item">
+        <span class="joshi-mark">と</span>
+        <div>
+          <p class="joshi-role">相手・並列</p>
+          <p class="joshi-ex">友達と話します。</p>
+        </div>
+      </div>
+
+      <div class="joshi-item">
+        <span class="joshi-mark">も</span>
+        <div>
+          <p class="joshi-role">同じものを追加する</p>
+          <p class="joshi-ex">私も行きます。</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">よく使う文型</h3>
+    <div class="pattern-list">
+      <div class="pattern">
+        <strong>〜です／〜ます</strong>
+        <div>
+          <p class="pattern-mean">丁寧な言い切り</p>
+          <p class="pattern-ex">これは本です。／毎日、日本語を勉強します。</p>
+        </div>
+      </div>
+
+      <div class="pattern">
+        <strong>〜ません</strong>
+        <div>
+          <p class="pattern-mean">丁寧な否定</p>
+          <p class="pattern-ex">お酒は飲みません。</p>
+        </div>
+      </div>
+
+      <div class="pattern">
+        <strong>〜ました</strong>
+        <div>
+          <p class="pattern-mean">丁寧な過去</p>
+          <p class="pattern-ex">昨日、映画を見ました。</p>
+        </div>
+      </div>
+
+      <div class="pattern">
+        <strong>〜ています</strong>
+        <div>
+          <p class="pattern-mean">進行・状態</p>
+          <p class="pattern-ex">今、ご飯を食べています。</p>
+        </div>
+      </div>
+
+      <div class="pattern">
+        <strong>〜てください</strong>
+        <div>
+          <p class="pattern-mean">依頼</p>
+          <p class="pattern-ex">ゆっくり話してください。</p>
+        </div>
+      </div>
+
+      <div class="pattern">
+        <strong>〜たいです</strong>
+        <div>
+          <p class="pattern-mean">希望</p>
+          <p class="pattern-ex">日本へ行きたいです。</p>
+        </div>
+      </div>
+
+      <div class="pattern">
+        <strong>〜てもいいですか</strong>
+        <div>
+          <p class="pattern-mean">許可を求める</p>
+          <p class="pattern-ex">写真を撮ってもいいですか。</p>
+        </div>
+      </div>
+
+      <div class="pattern">
+        <strong>〜なければなりません</strong>
+        <div>
+          <p class="pattern-mean">義務</p>
+          <p class="pattern-ex">明日までに宿題をしなければなりません。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 04 学習のコツ ========== -->
+  <section class="section" id="tips">
+    <h2 class="section-title"><span class="num">04</span>学習のコツ</h2>
+    <p class="section-desc">
+      上達の速さは、才能よりも「続け方」で決まります。
+      次の六つを意識するだけで、同じ時間でも身につき方が変わります。
+    </p>
+
+    <div class="tips">
+      <article class="tip">
+        <span class="tip-num">01</span>
+        <h3>毎日、少しずつ</h3>
+        <p>一日十分でも構いません。短い時間を毎日続けるほうが、週に一度まとめて勉強するより身につきます。</p>
+      </article>
+
+      <article class="tip">
+        <span class="tip-num">02</span>
+        <h3>声に出して読む</h3>
+        <p>目で追うだけでなく、声に出すと記憶に残りやすくなります。発音も自然に整っていきます。</p>
+      </article>
+
+      <article class="tip">
+        <span class="tip-num">03</span>
+        <h3>単語は文ごと覚える</h3>
+        <p>「本」という単語だけでなく、「本を読みます」という文で覚えると、そのまま会話で使えます。</p>
+      </article>
+
+      <article class="tip">
+        <span class="tip-num">04</span>
+        <h3>間違いを恐れない</h3>
+        <p>間違えるのは、挑戦している証拠です。直すたびに、一歩ずつ前に進んでいます。</p>
+      </article>
+
+      <article class="tip">
+        <span class="tip-num">05</span>
+        <h3>日本語に触れる時間をつくる</h3>
+        <p>音楽、ドラマ、ニュース、SNS。勉強だと思わずに、楽しみながら日本語に触れましょう。</p>
+      </article>
+
+      <article class="tip">
+        <span class="tip-num">06</span>
+        <h3>復習を組み込む</h3>
+        <p>翌日、一週間後、一ヶ月後。同じ内容に何度も出会うと、忘れにくくなります。</p>
+      </article>
+    </div>
+
+    <div class="schedule">
+      <h3>一日の学習例（合計30分）</h3>
+      <ul>
+        <li><span class="time">朝 5分</span><span>昨日覚えた単語を、声に出して復習する。</span></li>
+        <li><span class="time">昼 10分</span><span>新しい文法を一つだけ読んで、例文を三つ作る。</span></li>
+        <li><span class="time">夜 15分</span><span>短い文章を音読して、今日の出来事を一言日記に書く。</span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p class="footer-mark" aria-hidden="true">あ</p>
+  <p class="footer-title">日本語学習の手引き</p>
+  <p>毎日コツコツ、一緒に頑張りましょう。</p>
+</footer>
+
+<script>
+  const KANA = {
+    hiragana: [
+      ['あ','a'],['い','i'],['う','u'],['え','e'],['お','o'],
+      ['か','ka'],['き','ki'],['く','ku'],['け','ke'],['こ','ko'],
+      ['さ','sa'],['し','shi'],['す','su'],['せ','se'],['そ','so'],
+      ['た','ta'],['ち','chi'],['つ','tsu'],['て','te'],['と','to'],
+      ['な','na'],['に','ni'],['ぬ','nu'],['ね','ne'],['の','no'],
+      ['は','ha'],['ひ','hi'],['ふ','fu'],['へ','he'],['ほ','ho'],
+      ['ま','ma'],['み','mi'],['む','mu'],['め','me'],['も','mo'],
+      ['や','ya'],['',''],['ゆ','yu'],['',''],['よ','yo'],
+      ['ら','ra'],['り','ri'],['る','ru'],['れ','re'],['ろ','ro'],
+      ['わ','wa'],['',''],['',''],['',''],['を','wo'],
+      ['ん','n']
+    ],
+    katakana: [
+      ['ア','a'],['イ','i'],['ウ','u'],['エ','e'],['オ','o'],
+      ['カ','ka'],['キ','ki'],['ク','ku'],['ケ','ke'],['コ','ko'],
+      ['サ','sa'],['シ','shi'],['ス','su'],['セ','se'],['ソ','so'],
+      ['タ','ta'],['チ','chi'],['ツ','tsu'],['テ','te'],['ト','to'],
+      ['ナ','na'],['ニ','ni'],['ヌ','nu'],['ネ','ne'],['ノ','no'],
+      ['ハ','ha'],['ヒ','hi'],['フ','fu'],['ヘ','he'],['ホ','ho'],
+      ['マ','ma'],['ミ','mi'],['ム','mu'],['メ','me'],['モ','mo'],
+      ['ヤ','ya'],['',''],['ユ','yu'],['',''],['ヨ','yo'],
+      ['ラ','ra'],['リ','ri'],['ル','ru'],['レ','re'],['ロ','ro'],
+      ['ワ','wa'],['',''],['',''],['',''],['ヲ','wo'],
+      ['ン','n']
+    ]
+  };
+
+  const grid = document.getElementById('kanaGrid');
+  const tabs = document.querySelectorAll('.tab');
+
+  function renderKana(type){
+    grid.innerHTML = KANA[type].map(function(pair){
+      const kana = pair[0];
+      const romaji = pair[1];
+
+      if(!kana){
+        return '<div class="kana-cell is-empty" aria-hidden="true"></div>';
+      }
+
+      return '<div class="kana-cell">' +
+               '<span class="kana-char">' + kana + '</span>' +
+               '<span class="kana-romaji">' + romaji + '</span>' +
+             '</div>';
+    }).join('');
+  }
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){
+        t.classList.remove('is-active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      tab.classList.add('is-active');
+      tab.setAttribute('aria-selected', 'true');
+      renderKana(tab.dataset.kana);
+    });
+  });
+
+  renderKana('hiragana');
+</script>
+
+</body>
+</html>
