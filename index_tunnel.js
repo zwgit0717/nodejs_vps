@@ -15,7 +15,7 @@ const AUTO_ACCESS = process.env.AUTO_ACCESS || false; // false关闭自动保活
 const FILE_PATH = process.env.FILE_PATH || '.npm';    // 运行目录,sub节点文件保存目录
 const SUB_PATH = process.env.SUB_PATH || 'sub';       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3000;        // http服务订阅端口
-const UUID = process.env.UUID || ''; // 使用哪吒v1,在不同的平台运行需修改UUID,否则会覆盖
+const UUID = process.env.UUID || '9afd1229-b893-40c1-84dd-51e7ce204913'; // 使用哪吒v1,在不同的平台运行需修改UUID,否则会覆盖
 const NEZHA_SERVER = process.env.NEZHA_SERVER || '';        // 哪吒v1填写形式: nz.abc.com:8008  哪吒v0填写形式：nz.abc.com
 const NEZHA_PORT = process.env.NEZHA_PORT || '';            // 使用哪吒v1请留空，哪吒v0需填写
 const NEZHA_KEY = process.env.NEZHA_KEY || '';              // 哪吒v1的NZ_CLIENT_SECRET或哪吒v0的agent密钥
@@ -36,14 +36,15 @@ const SHOW_LOG = !['false', 'disable', 'no'].includes((process.env.SHOW_LOG || '
 // 用法: SSH_TUNNEL=true 并填写以下变量, 容器会通过 SSH 反向隧道把 xray 端口
 //       映射到你自己的 VPS 公网端口上, 不再依赖 CF 优选 IP。
 //       不启用时 (false), 行为与原版 index.js 完全一致。
-const SSH_TUNNEL = process.env.SSH_TUNNEL || 'true'; // true=启用VPS隧道
+const SSH_TUNNEL = process.env.SSH_TUNNEL || 'false'; // true=启用VPS隧道
 const SSH_HOST = process.env.SSH_HOST || '';          // VPS公网IP, 如 3.114.183.128
-const SSH_PORT = process.env.SSH_PORT || '';        // VPS SSH端口
+const SSH_PORT = process.env.SSH_PORT || '22';        // VPS SSH端口
 const SSH_USER = process.env.SSH_USER || '';          // 隧道用户名(无shell,仅端口转发)
 const SSH_KEY = process.env.SSH_KEY || '';            // 隧道私钥内容(多行直接粘贴)
 const SSH_RPORT = process.env.SSH_RPORT || '';        // VPS上暴露的公网端口, 每次部署必须唯一
 let SSH_LPORT = process.env.SSH_LPORT || '';          // 容器内xray端口, 留空=跟随ARGO_PORT
 const TUNNEL_ON = SSH_TUNNEL.toLowerCase() === 'true';
+const TUNNEL_TEMPLATE_VERSION = '2026-10-12-v4'; // 模板版本, 启动日志第一行打印, 用于确认部署的是否为最新版
 
 // 控制日志输出
 if (!SHOW_LOG) {
@@ -923,32 +924,77 @@ async function AddVisitTask() {
 // ============ VPS 反向隧道实现 ============
 
 function ensureSshClient() {
-  try {
-    execSync('which ssh', { stdio: 'ignore' });
-    return true;
-  } catch (e) { /* 没有, 尝试安装 */ }
-  console.log('ssh 客户端不存在, 尝试 apt-get 安装 openssh-client ...');
-  try {
-    execSync('apt-get update -qq && apt-get install -y -qq openssh-client', { stdio: 'ignore', timeout: 180000 });
-    execSync('which ssh', { stdio: 'ignore' });
-    console.log('openssh-client 安装成功');
-    return true;
-  } catch (e) {
-    return false;
+  // 不依赖 which, 直接找二进制 (精简镜像可能没有 which)
+  if (fs.existsSync('/usr/bin/ssh') || fs.existsSync('/bin/ssh')) return true;
+  try { execSync('command -v ssh', { stdio: 'ignore' }); return true; } catch (e) {}
+  console.log('ssh 客户端不存在, 尝试自动安装 openssh-client ...');
+  // 按包管理器自动选择: Alpine 用 apk, Debian/Ubuntu 用 apt-get
+  const installers = [
+    { test: 'command -v apk', cmds: [['apk', 'add', '--no-cache', 'openssh-client']] },
+    { test: 'command -v apt-get', cmds: [['apt-get', 'update', '-qq'], ['apt-get', 'install', '-y', '-qq', 'openssh-client']] },
+  ];
+  for (const inst of installers) {
+    try { execSync(inst.test, { stdio: 'ignore' }); } catch (e) { continue; }
+    let ok = true;
+    for (const c of inst.cmds) {
+      console.log('执行: ' + c.join(' '));
+      try {
+        execSync(c.join(' '), { stdio: ['ignore', 'pipe', 'pipe'], timeout: 180000 });
+      } catch (e) {
+        const err = ((e.stderr || '') + (e.message || '')).toString().slice(-300);
+        console.log('安装命令失败: ' + err);
+        ok = false;
+        break;
+      }
+    }
+    if (ok && (fs.existsSync('/usr/bin/ssh') || fs.existsSync('/bin/ssh'))) {
+      console.log('openssh-client 安装成功');
+      return true;
+    }
   }
+  console.log('未找到可用的包管理器 (apk/apt-get), 无法自动安装 ssh');
+  return false;
+}
+
+// 把环境变量里的私钥规范化: 兼容换行被压成一行 / 转义成 \n / \r\n 等各种粘贴损坏
+function normalizeSshKey(keyText) {
+  keyText = keyText.replace(/\r\n?/g, '\n');
+  if (!keyText.includes('\n') && keyText.includes('\\n')) {
+    keyText = keyText.replace(/\\n/g, '\n');
+  }
+  keyText = keyText.trim();
+  const m = keyText.match(/-----BEGIN ([^-]+)-----([\s\S]*?)-----END ([^-]+)-----/);
+  if (m) {
+    const body = m[2].replace(/\s+/g, '');
+    if (body) {
+      const wrapped = body.match(/.{1,70}/g).join('\n');
+      keyText = `-----BEGIN ${m[1].trim()}-----\n${wrapped}\n-----END ${m[3].trim()}-----`;
+    }
+  }
+  return keyText + '\n';
 }
 
 function writeSshKey() {
   let keyText = SSH_KEY;
   if (!keyText) throw new Error('SSH_TUNNEL=true 但 SSH_KEY 为空, 请填写隧道私钥');
-  if (!keyText.includes('\n') && keyText.includes('\\n')) {
-    keyText = keyText.replace(/\\n/g, '\n');
-  }
-  keyText = keyText.trim() + '\n';
+  keyText = normalizeSshKey(keyText);
   const sshDir = path.join(os.homedir(), '.ssh');
   if (!fs.existsSync(sshDir)) fs.mkdirSync(sshDir, { recursive: true });
   const keyPath = path.join(sshDir, 'tunnel_key');
   fs.writeFileSync(keyPath, keyText, { mode: 0o600 });
+  // 校验钥匙真的能被 ssh 解析 (ssh-keygen 不存在则跳过, 不硬报错)
+  let hasKeygen = false;
+  try { execSync('command -v ssh-keygen', { stdio: 'ignore' }); hasKeygen = true; } catch (e) {}
+  if (hasKeygen) {
+    try {
+      execSync(`ssh-keygen -y -f "${keyPath}"`, { stdio: ['ignore', 'pipe', 'pipe'] });
+      console.log('隧道私钥校验通过');
+    } catch (e) {
+      throw new Error('SSH_KEY 不是有效的私钥 (ssh-keygen 无法解析)。请检查环境变量里的钥匙是否完整复制、有无缺行。');
+    }
+  } else {
+    console.log('跳过私钥校验 (容器内无 ssh-keygen)');
+  }
   return keyPath;
 }
 
@@ -1053,6 +1099,7 @@ async function setupTunnel() {
 // 主运行逻辑
 async function startserver() {
   try {
+    alwaysLog(`[index_tunnel.js ${TUNNEL_TEMPLATE_VERSION}] SSH_TUNNEL=${SSH_TUNNEL}`);
     argoType();
     deleteNodes();
     cleanupOldFiles();
