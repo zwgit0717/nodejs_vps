@@ -686,11 +686,7 @@ async function extractDomains() {
           await exec(`nohup "${path.resolve(botPath)}" ${args} >/dev/null 2>&1 &`);
           console.log(`${botName} is running`);
           await new Promise((resolve) => setTimeout(resolve, 6000));
-          if (TUNNEL_ON) {
-      await setupTunnel();
-    } else {
-      await extractDomains();
-    }
+          await extractDomains();
         } catch (error) {
           console.error(`Error executing command: ${error}`);
         }
@@ -1073,7 +1069,11 @@ async function startserver() {
 
     await generateConfig();
     await downloadFilesAndRun();
-    await extractDomains();
+    if (TUNNEL_ON) {
+      await setupTunnel();
+    } else {
+      await extractDomains();
+    }
     await sendTelegram();
     await AddVisitTask();
   } catch (error) {
