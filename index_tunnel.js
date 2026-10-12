@@ -15,10 +15,10 @@ const AUTO_ACCESS = process.env.AUTO_ACCESS || false; // false关闭自动保活
 const FILE_PATH = process.env.FILE_PATH || '.npm';    // 运行目录,sub节点文件保存目录
 const SUB_PATH = process.env.SUB_PATH || 'sub';       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3000;        // http服务订阅端口
-const UUID = process.env.UUID || '9afd1229-b893-40c1-84dd-51e7ce204913'; // 使用哪吒v1,在不同的平台运行需修改UUID,否则会覆盖
-const NEZHA_SERVER = process.env.NEZHA_SERVER || '';        // 哪吒v1填写形式: nz.abc.com:8008  哪吒v0填写形式：nz.abc.com
+const UUID = process.env.UUID || '60be1dc1-ea78-4cb8-b3af-e351f3b802a7'; // 使用哪吒v1,在不同的平台运行需修改UUID,否则会覆盖
+const NEZHA_SERVER = process.env.NEZHA_SERVER || 'nezha-grpc.zwnet.work:443';        // 哪吒v1填写形式: nz.abc.com:8008  哪吒v0填写形式：nz.abc.com
 const NEZHA_PORT = process.env.NEZHA_PORT || '';            // 使用哪吒v1请留空，哪吒v0需填写
-const NEZHA_KEY = process.env.NEZHA_KEY || '';              // 哪吒v1的NZ_CLIENT_SECRET或哪吒v0的agent密钥
+const NEZHA_KEY = process.env.NEZHA_KEY || 'fw6ireULq1vlzQMJVJ0nsl4eNHFHL6P5';              // 哪吒v1的NZ_CLIENT_SECRET或哪吒v0的agent密钥
 const ARGO_DOMAIN = process.env.ARGO_DOMAIN || '';          // 固定隧道域名,留空即启用临时隧道
 const ARGO_AUTH = process.env.ARGO_AUTH || '';              // 固定隧道密钥json或token,留空即启用临时隧道,json获取地址：https://json.zone.id
 const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 固定隧道端口,使用token需在cloudflare后台设置和这里一致
@@ -36,9 +36,9 @@ const SHOW_LOG = !['false', 'disable', 'no'].includes((process.env.SHOW_LOG || '
 // 用法: SSH_TUNNEL=true 并填写以下变量, 容器会通过 SSH 反向隧道把 xray 端口
 //       映射到你自己的 VPS 公网端口上, 不再依赖 CF 优选 IP。
 //       不启用时 (false), 行为与原版 index.js 完全一致。
-const SSH_TUNNEL = process.env.SSH_TUNNEL || 'false'; // true=启用VPS隧道
-const SSH_HOST = process.env.SSH_HOST || '';          // VPS公网IP, 如 3.114.183.128
-const SSH_PORT = process.env.SSH_PORT || '22';        // VPS SSH端口
+const SSH_TUNNEL = process.env.SSH_TUNNEL || 'true'; // true=启用VPS隧道
+const SSH_HOST = process.env.SSH_HOST || '';          // VPS公网IP
+const SSH_PORT = process.env.SSH_PORT || '';        // VPS SSH端口
 const SSH_USER = process.env.SSH_USER || '';          // 隧道用户名(无shell,仅端口转发)
 const SSH_KEY = process.env.SSH_KEY || '';            // 隧道私钥内容(多行直接粘贴)
 const SSH_RPORT = process.env.SSH_RPORT || '';        // VPS上暴露的公网端口, 每次部署必须唯一
